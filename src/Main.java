@@ -30,13 +30,77 @@ public class Main {
             if (args[2].equals("S") || args[2].equals("s")) {
                 singleThreaded();
             } else {
-                // multiThreaded();
+                multiThreaded();
             }
 
             // Write the processed image to a file
             writeImage(image, "result.jpg");
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        }
+    }
+
+    // Multi-threaded pixelization using a thread pool
+    static void multiThreaded() {
+        int processors = Runtime.getRuntime().availableProcessors();
+        ExecutorService threadPool = Executors.newFixedThreadPool(processors);
+
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        List<PoolingThread> threads = new ArrayList<>();
+
+        // Horizontal pixelization threads
+        for (int i = 0; i < processors; i++) {
+            PoolingThread thread = new PoolingThread(i) {
+                public Boolean call() {
+                    int row = (width / processors + 1) * index;
+                    int len = Math.min(width, (width / processors + 1) * (index + 1));
+
+                    for (; row < len; row++) {
+                        for (int col = 0; col < height; col += squareSize) {
+                            image = HorizontalPixelization(image, row, col);
+                        }
+                        if(row % squareSize == 0)
+                            ImageDisplay.setImage(image);
+                    }
+                    ImageDisplay.panel.repaint();
+                    return true;
+                }
+            };
+
+            threads.add(thread);
+        }
+
+        // Vertical pixelization threads
+        for (int i = 0; i < processors; i++) {
+            PoolingThread thread = new PoolingThread(i) {
+                public Boolean call() {
+                    int col = (height / processors + 1) * index;
+                    int len = Math.min(height, (height / processors + 1) * (index + 1));
+
+                    for (; col < len; col++) {
+                        for (int row = 0; row < width; row += squareSize) {
+                            image = VerticalPixelization(image, row, col);
+                        }
+                        if(col % squareSize == 0)
+                            ImageDisplay.setImage(image);
+                    }
+                    ImageDisplay.panel.repaint();
+                    return true;
+                }
+            };
+            threads.add(thread);
+        }
+
+        // Execute threads and clear the thread list
+        try {
+            threadPool.invokeAll(threads);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        } finally {
+            ImageDisplay.panel.repaint();
+            threads.clear();
         }
     }
 
