@@ -81,7 +81,7 @@ public class Main {
 
                     for (; col < len; col++) {
                         for (int row = 0; row < width; row += squareSize) {
-                            image = VerticalPixelization(image, row, col);
+                            image = VerticalPooling(image, row, col);
                         }
                         if(col % squareSize == 0)
                             ImageDisplay.setImage(image);
@@ -121,7 +121,7 @@ public class Main {
         // Vertical pixelization
         for (int col = 0; col < height; col++) {
             for (int row = 0; row < width; row += squareSize){
-                image = VerticalPixelization(image, row, col);
+                image = VerticalPooling(image, row, col);
             }
             if(col % squareSize == 0)
                 ImageDisplay.setImage(image);
@@ -138,37 +138,37 @@ public class Main {
     }
     
     // Method for vertical pixelization of a given image at specified coordinates
-    static BufferedImage VerticalPixelization(BufferedImage image, int xPixel, int yPixel) {
+    static BufferedImage VerticalPooling(BufferedImage image, int x, int y) {
         Pixel averageColor = new Pixel(0, 0, 0);
 
-        int len = Math.min(image.getWidth(), xPixel + squareSize);
-        for (int i = xPixel; i < len; i++) {
-            averageColor.add(image.getRGB(i, yPixel));
+        int len = Math.min(image.getWidth(), x + squareSize);
+        for (int i = x; i < len; i++) {
+            averageColor.add(image.getRGB(i, y));
         }
 
-        int divisor = Math.min(squareSize, image.getWidth() - xPixel);
+        int divisor = Math.min(squareSize, image.getWidth() - x);
         averageColor.div(divisor);
 
-        for (int i = xPixel; i < len; i++) {
-            image.setRGB(i, yPixel, averageColor.getRGB());
+        for (int i = x; i < len; i++) {
+            image.setRGB(i, y, averageColor.getRGB());
         }
         return image;
     }
 
     // Method for horizontal pixelization of a given image at specified coordinates
-    static BufferedImage HorizontalPixelization(BufferedImage image, int xPixel, int yPixel) {
+    static BufferedImage HorizontalPixelization(BufferedImage image, int x, int y) {
         Pixel averageColor = new Pixel(0, 0, 0);
 
-        int len = Math.min(image.getHeight(), yPixel + squareSize);
-        for (int i = yPixel; i < len; i++) {
-            averageColor.add(image.getRGB(xPixel, i));
+        int len = Math.min(image.getHeight(), y + squareSize);
+        for (int i = y; i < len; i++) {
+            averageColor.add(image.getRGB(x, i));
         }
 
-        int divisor = Math.min(squareSize, image.getHeight() - yPixel);
+        int divisor = Math.min(squareSize, image.getHeight() - y);
         averageColor.div(divisor);
 
-        for (int i = yPixel; i < len; i++) {
-            image.setRGB(xPixel, i, averageColor.getRGB());
+        for (int i = y; i < len; i++) {
+            image.setRGB(x, i, averageColor.getRGB());
         }
 
         return image;
@@ -176,11 +176,7 @@ public class Main {
 
     // Method to write the processed image to a file
     public static void writeImage(BufferedImage image, String out) throws IOException {
-        try {
-            File file = new File("./" + out);
-            ImageIO.write(image, "jpg", file);
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
+        File file = new File("./" + out);
+        ImageIO.write(image, "jpg", file);
     }
 }

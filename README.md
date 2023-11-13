@@ -32,8 +32,11 @@ This results in the desired average pooling, albeit in a cleaner fashion. As a r
 
 How to run the code:
 ```bash
+# Clone the repository
+git clone https://github.com/ceferisbarov/3-concurrency
+
 # Walk into the source directory
-cd src
+cd 3-concurrency/src
 
 # Compile the code
 javac *.java

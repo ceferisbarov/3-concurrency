@@ -8,17 +8,16 @@ public class Pixel {
 
     // Constructor to initialize a Pixel with specified RGB values
     public Pixel(int r, int g, int b) {
-        setColor(r, g, b);
+        this.R = r;
+        this.G = g;
+        this.B = b;
     }
 
     // Constructor to initialize a Pixel with a Color object
     public Pixel(Color c) {
-        setColor(c.getRed(), c.getGreen(), c.getBlue());
-    }
-
-    // Get the Color representation of the Pixel
-    public Color getColor() {
-        return new Color(R, G, B);
+        this.R = c.getRed();
+        this.G = c.getGreen();
+        this.B = c.getBlue();
     }
 
     // Set the RGB values of the Pixel
